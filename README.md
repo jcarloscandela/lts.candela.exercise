@@ -24,6 +24,20 @@ LTS.Candela.API/
 ├── Program.cs              # Application entry point
 ├── Dockerfile             # Container build instructions
 └── appsettings.json      # Application configuration
+
+LTS.Candela.Frontend/
+├── src/
+│   ├── App.vue             # Main Vue component
+│   ├── main.ts             # Application entry point
+│   ├── style.css           # Global styles
+│   ├── services/           # API service layer
+│   ├── types/              # TypeScript definitions
+│   └── views/              # Vue views
+├── package.json            # Project dependencies
+├── tsconfig.json           # TypeScript configuration
+├── vite.config.ts          # Vite build configuration
+├── Dockerfile              # Container build instructions
+└── index.html              # HTML entry point
 ```
 
 ## Setup Instructions
@@ -34,7 +48,7 @@ LTS.Candela.API/
 
 2. **Running the Application**
    ```bash
-   docker compose up -d
+   docker compose up -d --build
    ```
    This will start:
    - API service on port 8080
