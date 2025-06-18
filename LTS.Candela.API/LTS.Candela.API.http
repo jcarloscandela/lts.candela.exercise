@@ -1,0 +1,6 @@
+@LTS.Candela.API_HostAddress = http://localhost:5188
+
+GET {{LTS.Candela.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
