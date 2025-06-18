@@ -13,6 +13,9 @@ namespace LTS.Candela.API
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            // Add health checks
+            builder.Services.AddHealthChecks();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,6 +30,9 @@ namespace LTS.Candela.API
 
 
             app.MapControllers();
+
+            // Map health check endpoint
+            app.MapHealthChecks("/health");
 
             app.Run();
         }
