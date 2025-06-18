@@ -9,7 +9,6 @@
 
 <script setup lang="ts">
 import Toast from 'primevue/toast';
-// Main app component
 </script>
 
 <style>
