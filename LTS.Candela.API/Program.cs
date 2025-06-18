@@ -38,8 +38,6 @@ namespace LTS.Candela.API
                 app.MapOpenApi();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseCors("AllowAll");
 
             app.UseAuthorization();
@@ -49,6 +47,13 @@ namespace LTS.Candela.API
 
             // Map health check endpoint
             app.MapHealthChecks("/health");
+
+            // Apply migrations on startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
+            }
 
             app.Run();
         }
