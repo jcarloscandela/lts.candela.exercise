@@ -5,6 +5,9 @@ import Users from './views/Users.vue'
 import './style.css'
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import ToastService from 'primevue/toastservice';
+import Toolbar from 'primevue/toolbar';
+import { Button } from 'primevue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -22,5 +25,9 @@ app.use(PrimeVue, {
         preset: Aura
     }
 });
+app.use(ToastService);
+
+app.component('Button', Button);
+app.component('Toolbar', Toolbar);
 
 app.mount('#app')

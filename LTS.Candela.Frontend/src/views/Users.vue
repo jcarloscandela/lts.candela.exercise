@@ -2,7 +2,12 @@
   <div>
     <h1 class="text-3xl font-bold mb-8">Users</h1>
     
-    <div class="card">
+  <div class="card">
+    <Toolbar class="mb-6">
+      <template #start>
+        <Button label="New" icon="pi pi-plus" class="mr-2" @click="createUser" />
+      </template>
+    </Toolbar>
       <DataTable
         :value="users"
         :paginator="true"
@@ -24,6 +29,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { UserService } from '../services/UserService';
@@ -34,6 +40,23 @@ const loading = ref(true);
 const first = ref(0);
 const totalRecords = ref(0);
 
+const toast = useToast();
+
+const createUser = async () => {
+  try {
+    const newUser = {
+      name: "Hardcoded User",
+      email: "hardcoded@example.com",
+      tokens: 100
+    };
+    await UserService.createUser(newUser);
+    fetchUsers();
+    toast.add({ severity: 'success', summary: 'Success', detail: 'User created successfully', life: 3000 });
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to create user', life: 3000 });
+  }
+};
+
 const fetchUsers = async (page: number = 1) => {
   try {
     loading.value = true;
@@ -43,6 +66,7 @@ const fetchUsers = async (page: number = 1) => {
     totalRecords.value = response.totalItems;
   } catch (error) {
     console.error('Error fetching users:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch users', life: 3000 });
   } finally {
     loading.value = false;
   }

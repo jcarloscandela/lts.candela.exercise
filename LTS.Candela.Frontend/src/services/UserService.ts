@@ -14,10 +14,14 @@ export interface PaginationParams {
 }
 
 export class UserService {
+    static async createUser(user: { name: string; email: string; tokens: number }): Promise<void> {
+        await axios.post(`${this.BASE_URL}/create`, user);
+    }
+
     private static readonly BASE_URL = '/api/user';
 
     static async getUsers(params: PaginationParams): Promise<PaginatedResponse<User>> {
-        try {
+        
             const response = await axios.get<PaginatedResponse<User>>(this.BASE_URL, {
                 params: {
                     page: params.page,
@@ -25,9 +29,5 @@ export class UserService {
                 }
             });
             return response.data;
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            throw error;
-        }
     }
 }
