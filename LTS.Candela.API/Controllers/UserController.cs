@@ -21,9 +21,17 @@ namespace LTS.Candela.API.Controllers
 
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<PaginatedResponse<User>>> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            return await _context.Users.ToListAsync();
+            var query = _context.Users.AsQueryable();
+            
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedResponse<User>(items, totalItems, page, pageSize);
         }
 
         // GET: api/User/5

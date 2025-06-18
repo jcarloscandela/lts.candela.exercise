@@ -74,3 +74,4 @@ node_modules/
 
 # Docker
 docker-compose.override.yml
+dist/
