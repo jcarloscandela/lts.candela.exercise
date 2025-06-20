@@ -1,32 +1,23 @@
-import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+/**
+ * main.ts
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
+
+// Plugins
+import { registerPlugins } from '@/plugins'
+
+// Components
 import App from './App.vue'
-import Users from './views/Users.vue'
-import './style.css'
-import PrimeVue from 'primevue/config';
-import Aura from '@primeuix/themes/aura';
-import ToastService from 'primevue/toastservice';
-import Toolbar from 'primevue/toolbar';
-import { Button } from 'primevue'
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    { path: '/', redirect: '/users' },
-    { path: '/users', component: Users }
-  ]
-})
+// Composables
+import { createApp } from 'vue'
 
-const app = createApp(App);
-app.use(router);
-app.use(PrimeVue, {
-    theme: {
-        preset: Aura
-    }
-});
-app.use(ToastService);
+// Styles
+import 'unfonts.css'
 
-app.component('Button', Button);
-app.component('Toolbar', Toolbar);
+const app = createApp(App)
+
+registerPlugins(app)
 
 app.mount('#app')
