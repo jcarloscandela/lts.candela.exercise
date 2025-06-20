@@ -55,3 +55,15 @@ export async function createUser(user: { name: string; email: string; translatio
   }
   return await response.json()
 }
+
+export async function updateUserCredits(id: number, credits: number): Promise<void> {
+  const response = await fetch(`${API_BASE}/${id}/credits`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credits)
+  })
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(error || 'Failed to update credits')
+  }
+}

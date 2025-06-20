@@ -16,6 +16,9 @@
       @update:options="loadItems"
     >
       <template #item.actions="{ item }">
+        <v-btn color="primary" icon @click="openCreditsDialog(item)">
+          <v-icon>mdi-currency-usd</v-icon>
+        </v-btn>
         <v-btn color="red" icon @click="openDeleteDialog(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
@@ -44,6 +47,13 @@
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
       {{ snackbarText }}
     </v-snackbar>
+    <UserCreditsDialog
+      v-if="selectedUser"
+      v-model="showCreditsDialog"
+      :user-id="selectedUser.id"
+      :initial-credits="selectedUser.translationCredits"
+      @updated="onCreditsUpdated"
+    />
   </v-container>
 </template>
 
@@ -51,12 +61,30 @@
   import { ref } from 'vue'
   import { deleteUserById, fetchUsers } from '../services/userService'
   import UserDialog from '../components/UserDialog.vue'
+  import UserCreditsDialog from '../components/UserCreditsDialog.vue'
 
   const deleteDialog = ref(false)
   const userToDelete = ref<any>(null)
   const snackbar = ref(false)
   const snackbarText = ref('')
   const snackbarColor = ref('success')
+
+  const showCreditsDialog = ref(false)
+  const selectedUser = ref<any>(null)
+
+  function openCreditsDialog(user: any) {
+    selectedUser.value = user
+    showCreditsDialog.value = true
+  }
+
+  function onCreditsUpdated(newCredits: number) {
+    snackbarText.value = 'Credits updated'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+    showCreditsDialog.value = false
+    selectedUser.value = null
+    loadItems({ page: currentPage.value, itemsPerPage: itemsPerPage.value })
+  }
 
   function openDeleteDialog (user: any) {
     userToDelete.value = user

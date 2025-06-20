@@ -27,16 +27,6 @@
             ]"
             required
           />
-          <v-text-field
-            v-model.number="formData.translationCredits"
-            label="Credits"
-            type="number"
-            :rules="[
-              v => v !== null && v !== '' || 'Credits are required',
-              v => !isNaN(Number(v)) && Number(v) >= 0 || 'Credits must be a non-negative number'
-            ]"
-            required
-          />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -71,8 +61,7 @@ const loading = ref(false)
 const form = ref()
 const formData = ref({
   name: '',
-  email: '',
-  translationCredits: 0
+  email: ''
 })
 
 watch(
@@ -89,7 +78,7 @@ function openDialog() {
   if (props.mode === 'edit' && props.userData) {
     formData.value = { ...props.userData }
   } else {
-    formData.value = { name: '', email: '', translationCredits: 0 }
+    formData.value = { name: '', email: '' }
   }
   dialog.value = true
 }
@@ -110,7 +99,7 @@ async function submit() {
       await userService.createUser({
         name: formData.value.name,
         email: formData.value.email,
-        translationCredits: Number(formData.value.translationCredits)
+        translationCredits: 0
       })
       emit('success', 'User created successfully')
     }
