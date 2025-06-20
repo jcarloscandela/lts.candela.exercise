@@ -15,6 +15,13 @@
         </v-btn>
       </template>
     </v-data-table-server>
+    <v-skeleton-loader
+      v-if="loading && serverItems.length === 0"
+      class="my-4"
+      :height="300"
+      :loading="loading"
+      type="table"
+    />
     <v-dialog v-model="deleteDialog" max-width="400">
       <v-card>
         <v-card-title>Confirm Delete</v-card-title>
@@ -35,77 +42,71 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+  import { ref } from 'vue'
+  import { deleteUserById, fetchUsers } from '../services/userService'
 
-const deleteDialog = ref(false)
-const userToDelete = ref<any>(null)
-const snackbar = ref(false)
-const snackbarText = ref('')
-const snackbarColor = ref('success')
+  const deleteDialog = ref(false)
+  const userToDelete = ref<any>(null)
+  const snackbar = ref(false)
+  const snackbarText = ref('')
+  const snackbarColor = ref('success')
 
-function openDeleteDialog(user: any) {
-  userToDelete.value = user
-  deleteDialog.value = true
-}
-
-async function deleteUser() {
-  if (!userToDelete.value) return
-  try {
-    const response = await fetch(`https://localhost:7252/api/users/${userToDelete.value.id}`, {
-      method: 'DELETE'
-    })
-    if (!response.ok) throw new Error('Delete failed')
-    snackbarText.value = 'User deleted successfully'
-    snackbarColor.value = 'success'
-    await loadItems({ page: 1, itemsPerPage: itemsPerPage.value })
-  } catch {
-    snackbarText.value = 'Error deleting user'
-    snackbarColor.value = 'error'
-  } finally {
-    snackbar.value = true
-    deleteDialog.value = false
-    userToDelete.value = null
+  function openDeleteDialog (user: any) {
+    userToDelete.value = user
+    deleteDialog.value = true
   }
-}
 
-const headers = [
-  { title: 'Name', value: 'name' },
-  { title: 'Email', value: 'email' },
-  { title: 'Credits', value: 'translationCredits' },
-  { title: 'Actions', value: 'actions', sortable: false },
-]
-
-const serverItems = ref([])
-const totalItems = ref(0)
-const loading = ref(false)
-const itemsPerPage = ref(10)
-
-async function loadItems (options: any) {
-  loading.value = true
-  try {
-    const page = options.page || 1
-    const pageSize = options.itemsPerPage || itemsPerPage.value
-    const sortBy = options.sortBy?.[0]?.key || ''
-    const sortOrder = options.sortBy?.[0]?.order === 'desc' ? 'desc' : 'asc'
-
-    const params = new URLSearchParams({
-      page: page.toString(),
-      pageSize: pageSize.toString(),
-    })
-    if (sortBy) {
-      params.append('sortBy', sortBy)
-      params.append('sortOrder', sortOrder)
+  async function deleteUser () {
+    if (!userToDelete.value) return
+    try {
+      await deleteUserById(userToDelete.value.id)
+      snackbarText.value = 'User deleted successfully'
+      snackbarColor.value = 'success'
+      await loadItems({ page: 1, itemsPerPage: itemsPerPage.value })
+    } catch {
+      snackbarText.value = 'Error deleting user'
+      snackbarColor.value = 'error'
+    } finally {
+      snackbar.value = true
+      deleteDialog.value = false
+      userToDelete.value = null
     }
-
-    const response = await fetch(`https://localhost:7252/api/users?${params}`)
-    const data = await response.json()
-    serverItems.value = data.items || []
-    totalItems.value = data.total || 0
-  } catch {
-    serverItems.value = []
-    totalItems.value = 0
-  } finally {
-    loading.value = false
   }
-}
+
+  const headers = [
+    { title: 'Name', value: 'name' },
+    { title: 'Email', value: 'email' },
+    { title: 'Credits', value: 'translationCredits' },
+    { title: 'Actions', value: 'actions', sortable: false },
+  ]
+
+  const serverItems = ref([])
+  const totalItems = ref(0)
+  const currentPage = ref(1)
+  const totalPages = ref(1)
+  const loading = ref(false)
+  const itemsPerPage = ref(10)
+
+  async function loadItems (options: any) {
+    loading.value = true
+    try {
+      const page = options.page || 1
+      const pageSize = options.itemsPerPage || itemsPerPage.value
+      const sortBy = options.sortBy?.[0]?.key || ''
+      const sortOrder = options.sortBy?.[0]?.order === 'desc' ? 'desc' : 'asc'
+
+      const data = await fetchUsers(page, pageSize, sortBy, sortOrder)
+      serverItems.value = data.items || []
+      totalItems.value = data.totalItems || 0
+      currentPage.value = data.currentPage || 1
+      totalPages.value = data.totalPages || 1
+    } catch {
+      serverItems.value = []
+      totalItems.value = 0
+      currentPage.value = 1
+      totalPages.value = 1
+    } finally {
+      loading.value = false
+    }
+  }
 </script>
