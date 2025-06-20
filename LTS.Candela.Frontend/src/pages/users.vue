@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <UserDialog
+      mode="create"
+      @success="onUserDialogSuccess"
+      @error="onUserDialogError"
+      @refresh="onUserDialogRefresh"
+    />
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
@@ -44,6 +50,7 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { deleteUserById, fetchUsers } from '../services/userService'
+  import UserDialog from '../components/UserDialog.vue'
 
   const deleteDialog = ref(false)
   const userToDelete = ref<any>(null)
@@ -108,5 +115,21 @@
     } finally {
       loading.value = false
     }
+  }
+
+  function onUserDialogSuccess(msg: string) {
+    snackbarText.value = msg
+    snackbarColor.value = 'success'
+    snackbar.value = true
+  }
+
+  function onUserDialogError(msg: string) {
+    snackbarText.value = msg
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
+
+  function onUserDialogRefresh() {
+    loadItems({ page: currentPage.value, itemsPerPage: itemsPerPage.value })
   }
 </script>

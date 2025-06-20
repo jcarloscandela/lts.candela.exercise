@@ -42,3 +42,16 @@ export async function deleteUserById (id: number): Promise<void> {
     throw new Error('Delete failed')
   }
 }
+
+export async function createUser(user: { name: string; email: string; translationCredits: number }): Promise<User> {
+  const response = await fetch(API_BASE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user)
+  })
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(error || 'Failed to create user')
+  }
+  return await response.json()
+}
