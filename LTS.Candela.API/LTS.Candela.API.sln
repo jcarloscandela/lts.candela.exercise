@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36212.18 d17.14
+VisualStudioVersion = 17.14.36212.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LTS.Candela.API", "LTS.Candela.API.csproj", "{43A19A67-8EC8-4EDD-83D5-A300D99C6F1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LTS.Candela.API", "LTS.Candela.API\LTS.Candela.API.csproj", "{E9C5364B-9C4A-D6D0-0D6F-88BE8DC1A09A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{43A19A67-8EC8-4EDD-83D5-A300D99C6F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43A19A67-8EC8-4EDD-83D5-A300D99C6F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43A19A67-8EC8-4EDD-83D5-A300D99C6F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43A19A67-8EC8-4EDD-83D5-A300D99C6F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9C5364B-9C4A-D6D0-0D6F-88BE8DC1A09A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9C5364B-9C4A-D6D0-0D6F-88BE8DC1A09A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9C5364B-9C4A-D6D0-0D6F-88BE8DC1A09A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9C5364B-9C4A-D6D0-0D6F-88BE8DC1A09A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
