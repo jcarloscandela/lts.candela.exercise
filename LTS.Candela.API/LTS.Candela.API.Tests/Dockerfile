@@ -1,20 +1,14 @@
-# Use the official .NET SDK image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-
+# Use .NET 9 SDK for build and test
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["LTS.Candela.API.Tests.csproj", "."]
+RUN dotnet restore "./LTS.Candela.API.Tests.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "./LTS.Candela.API.Tests.csproj" -c $BUILD_CONFIGURATION
 
-# Copy solution file
-COPY ../LTS.Candela.API.sln ./
-
-# Copy API and test project folders
-COPY ../LTS.Candela.API/LTS.Candela.API ./LTS.Candela.API
-COPY . ./LTS.Candela.API.Tests
-
-# Restore dependencies
-RUN dotnet restore LTS.Candela.API.sln
-
-# Build the test project
-RUN dotnet build LTS.Candela.API.Tests/LTS.Candela.API.Tests.csproj --no-restore -c Release
-
-# Run tests with code coverage
-CMD ["dotnet", "test", "LTS.Candela.API.Tests/LTS.Candela.API.Tests.csproj", "--no-build", "-c", "Release", "--collect:XPlat Code Coverage", "--logger:trx"]
+# Test stage
+FROM build AS test
+ARG BUILD_CONFIGURATION=Release
+CMD ["dotnet", "test", "./LTS.Candela.API.Tests.csproj", "-c", "Release", "--no-build", "--logger:trx"]
