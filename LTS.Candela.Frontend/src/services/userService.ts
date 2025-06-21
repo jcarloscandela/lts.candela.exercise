@@ -1,19 +1,9 @@
 // src/services/userService.ts
-export interface User {
-  id: number
-  name: string
-  email: string
-  translationCredits: number
-}
 
-export interface Paginated<T> {
-  items: T[]
-  totalItems: number
-  currentPage: number
-  totalPages: number
-}
+import type { Paginated } from "../models/paginated"
+import type { User } from "../models/user"
 
-const API_BASE = 'https://localhost:7252/api/users'
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string
 
 export async function fetchUsers (
   page: number,

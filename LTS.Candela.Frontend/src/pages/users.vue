@@ -40,13 +40,6 @@
         </v-btn>
       </template>
     </v-data-table-server>
-    <v-skeleton-loader
-      v-if="loading && serverItems.length === 0"
-      class="my-4"
-      :height="300"
-      :loading="loading"
-      type="table"
-    />
     <v-dialog v-model="deleteDialog" max-width="400">
       <v-card>
         <v-card-title>Confirm Delete</v-card-title>
