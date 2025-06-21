@@ -6,6 +6,15 @@
       @error="onUserDialogError"
       @refresh="onUserDialogRefresh"
     />
+    <UserDialog
+      v-model="editDialogVisible"
+      mode="edit"
+      :userData="editDialogUser"
+      @success="onUserDialogSuccess"
+      @error="onUserDialogError"
+      @refresh="onUserDialogRefresh"
+      @close="onEditDialogClose"
+    />
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
@@ -18,6 +27,9 @@
       <template #item.actions="{ item }">
         <v-btn color="primary" icon @click="openCreditsDialog(item)">
           <v-icon>mdi-currency-usd</v-icon>
+        </v-btn>
+        <v-btn color="blue" icon @click="openEditDialog(item)">
+          <v-icon>mdi-pencil</v-icon>
         </v-btn>
         <v-btn color="red" icon @click="openDeleteDialog(item)">
           <v-icon>mdi-delete</v-icon>
@@ -71,6 +83,18 @@
 
   const showCreditsDialog = ref(false)
   const selectedUser = ref<any>(null)
+  const editDialogUser = ref<any>(null)
+  const editDialogVisible = ref(false)
+
+  function openEditDialog(user: any) {
+    editDialogUser.value = user
+    editDialogVisible.value = true
+  }
+
+  function onEditDialogClose() {
+    editDialogVisible.value = false
+    editDialogUser.value = null
+  }
 
   function openCreditsDialog(user: any) {
     selectedUser.value = user

@@ -5,6 +5,11 @@ using LTS.Candela.API.Models;
 
 namespace LTS.Candela.API.Controllers
 {
+    public class UpdateUserDto
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -56,29 +61,30 @@ namespace LTS.Candela.API.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        // PUT: api/User/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, User user)
+        // PATCH: api/User/5
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchUser(Guid id, [FromBody] UpdateUserDto dto)
         {
-            if (id != user.Id)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
+            // Prevent duplicate email
+            if (!string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
+                var emailExists = await _context.Users.AnyAsync(u => u.Email == dto.Email && u.Id != id);
+                if (emailExists)
                 {
-                    return NotFound();
+                    return BadRequest(new { error = "Email already exists." });
                 }
-                throw;
             }
+
+            user.Name = dto.Name;
+            user.Email = dto.Email;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

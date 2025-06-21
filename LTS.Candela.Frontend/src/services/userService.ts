@@ -67,3 +67,22 @@ export async function updateUserCredits(id: number, credits: number): Promise<vo
     throw new Error(error || 'Failed to update credits')
   }
 }
+
+export async function updateUser(id: number, user: { name: string; email: string }): Promise<void> {
+  const response = await fetch(`${API_BASE}/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: user.name, email: user.email })
+  })
+  if (!response.ok) {
+    let errorMsg = 'Failed to update user'
+    try {
+      const data = await response.json()
+      errorMsg = data.error || errorMsg
+    } catch {
+      const text = await response.text()
+      if (text) errorMsg = text
+    }
+    throw new Error(errorMsg)
+  }
+}

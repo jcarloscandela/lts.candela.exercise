@@ -1,10 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="400">
-    <template #activator="{ props }">
-      <v-btn v-bind="props" color="primary" @click="openDialog">
-        {{ mode === 'edit' ? 'Edit User' : 'Add User' }}
-      </v-btn>
-    </template>
+  <v-dialog v-model="dialog" max-width="400" @update:model-value="onDialogUpdate">
     <v-card>
       <v-card-title>
         {{ mode === 'edit' ? 'Edit User' : 'Create User' }}
@@ -47,17 +42,39 @@ import * as userService from '../services/userService'
 const props = defineProps<{
   mode?: 'create' | 'edit'
   userData?: { name: string; email: string; translationCredits: number }
+  modelValue?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'success', msg: string): void
   (e: 'error', msg: string): void
   (e: 'refresh'): void
+  (e: 'close'): void
+  (e: 'update:modelValue', value: boolean): void
 }>()
 
-const dialog = ref(false)
+const dialog = ref(props.modelValue ?? false)
 const valid = ref(false)
 const loading = ref(false)
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    dialog.value = val ?? false
+  }
+)
+
+watch(
+  () => dialog.value,
+  (val) => {
+    emit('update:modelValue', val)
+    if (!val) emit('close')
+  }
+)
+
+function onDialogUpdate(val: boolean) {
+  dialog.value = val
+}
 const form = ref()
 const formData = ref({
   name: '',
@@ -74,14 +91,7 @@ watch(
   { immediate: true }
 )
 
-function openDialog() {
-  if (props.mode === 'edit' && props.userData) {
-    formData.value = { ...props.userData }
-  } else {
-    formData.value = { name: '', email: '' }
-  }
-  dialog.value = true
-}
+/* openDialog removed: dialog is now controlled externally */
 
 function closeDialog() {
   dialog.value = false
@@ -92,9 +102,16 @@ async function submit() {
   loading.value = true
   try {
     if (props.mode === 'edit') {
-      // Implement edit logic here if needed in the future
-      // await userService.updateUser(formData.value)
-      emit('success', 'User updated successfully')
+      if (props.userData && 'id' in props.userData) {
+        await userService.updateUser(props.userData.id, {
+          name: formData.value.name,
+          email: formData.value.email
+        })
+        emit('success', 'User updated successfully')
+      } else {
+        emit('error', 'User ID missing for update')
+        return
+      }
     } else {
       await userService.createUser({
         name: formData.value.name,
