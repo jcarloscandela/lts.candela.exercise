@@ -47,11 +47,5 @@ services:
       timeout: 5s
       retries: 5
 
-  test:
-    build:
-      context: ./LTS.Candela.API/LTS.Candela.API.Tests
-      dockerfile: Dockerfile
-    restart: "no"
-
 volumes:
   postgres_data:
