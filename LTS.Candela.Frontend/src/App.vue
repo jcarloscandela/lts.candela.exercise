@@ -2,9 +2,15 @@
 <v-app id="inspire">
   <v-navigation-drawer v-model="drawer">
     <v-list>
+      <v-list-item router to="/">
+        <v-list-item-title>
+          <v-icon>mdi-home</v-icon> Home
+        </v-list-item-title>
+      </v-list-item>
       <v-list-item router to="/users">
-
-        <v-list-item-title> <v-icon>mdi-account-group</v-icon> Users </v-list-item-title>
+        <v-list-item-title>
+          <v-icon>mdi-account-group</v-icon> Users
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
