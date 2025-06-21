@@ -88,8 +88,6 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-      sass: {
-        ap      },
       scss: {
         api: 'modern-compiler',
       },
