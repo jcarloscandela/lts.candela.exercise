@@ -1,129 +1,86 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LTS.Candela.API.Data;
+using LTS.Candela.API.Services;
+using LTS.Candela.API.Dtos;
 using LTS.Candela.API.Models;
 
-namespace LTS.Candela.API.Controllers
+namespace LTS.Candela.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
 {
-    public class UpdateUserDto
+    private readonly IUserService _userService;
+
+    public UsersController(IUserService userService)
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+        _userService = userService;
     }
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+
+    // GET: api/User
+    [HttpGet]
+    public async Task<ActionResult<PaginatedResponse<UserDto>>> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        private readonly ApplicationDbContext _context;
+        var paginatedUsers = await _userService.GetUsersPaginatedAsync(page, pageSize);
+        return Ok(paginatedUsers);
+    }
 
-        public UsersController(ApplicationDbContext context)
+    // GET: api/User/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserDto>> GetUser(Guid id)
+    {
+        var userDto = await _userService.GetUserByIdAsync(id);
+
+        if (userDto == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        // GET: api/User
-        [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<User>>> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-        {
-            var query = _context.Users.AsQueryable();
-            
-            var totalItems = await query.CountAsync();
-            var items = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+        return Ok(userDto);
+    }
 
-            return new PaginatedResponse<User>(items, totalItems, page, pageSize);
+    // POST: api/User
+    [HttpPost]
+    public async Task<ActionResult<UserDto>> CreateUser(UserCreateDto userCreateDto)
+    {
+        var userDto = await _userService.CreateUserAsync(userCreateDto);
+
+        return CreatedAtAction(nameof(GetUser), new { id = userDto.Id }, userDto);
+    }
+
+    // PATCH: api/User/5
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> PatchUser(Guid id, [FromBody] UserUpdateDto userUpdateDto)
+    {
+        var updatedUserDto = await _userService.UpdateUserAsync(id, userUpdateDto);
+        if (updatedUserDto == null)
+        {
+            return NotFound();
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        return NoContent();
+    }
+
+    // DELETE: api/User/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(Guid id)
+    {
+        var deleted = await _userService.DeleteUserAsync(id);
+        if (!deleted)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return NotFound();
         }
+        return NoContent();
+    }
 
-        // POST: api/User
-        [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+    // PATCH: api/User/5/credits
+    [HttpPatch("{id}/credits")]
+    public async Task<IActionResult> UpdateCredits(Guid id, [FromBody] int credits)
+    {
+        var updatedUserDto = await _userService.UpdateCreditsAsync(id, credits);
+        if (updatedUserDto == null)
         {
-            user.Id = Guid.NewGuid();
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            return NotFound();
         }
-
-        // PATCH: api/User/5
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchUser(Guid id, [FromBody] UpdateUserDto dto)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            // Prevent duplicate email
-            if (!string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase))
-            {
-                var emailExists = await _context.Users.AnyAsync(u => u.Email == dto.Email && u.Id != id);
-                if (emailExists)
-                {
-                    return BadRequest(new { error = "Email already exists." });
-                }
-            }
-
-            user.Name = dto.Name;
-            user.Email = dto.Email;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // DELETE: api/User/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // PATCH: api/User/5/credits
-        [HttpPatch("{id}/credits")]
-        public async Task<IActionResult> UpdateCredits(Guid id, [FromBody] int credits)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.TranslationCredits = credits;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(Guid id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
+        return NoContent();
     }
 }
