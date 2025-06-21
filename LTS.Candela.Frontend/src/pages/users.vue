@@ -1,6 +1,10 @@
 <template>
   <v-container>
+    <v-btn color="primary" class="mb-4" @click="createDialogVisible = true">
+      Create User
+    </v-btn>
     <UserDialog
+      v-model="createDialogVisible"
       mode="create"
       @success="onUserDialogSuccess"
       @error="onUserDialogError"
@@ -75,6 +79,7 @@
   import UserDialog from '../components/UserDialog.vue'
   import UserCreditsDialog from '../components/UserCreditsDialog.vue'
 
+  const createDialogVisible = ref(false)
   const deleteDialog = ref(false)
   const userToDelete = ref<any>(null)
   const snackbar = ref(false)

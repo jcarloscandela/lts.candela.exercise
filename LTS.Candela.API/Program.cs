@@ -2,6 +2,7 @@ using LTS.Candela.API.Data;
 using LTS.Candela.API.Services;
 using LTS.Candela.API.Repositories;
 using Microsoft.EntityFrameworkCore;
+using LTS.Candela.API.Middleware;
 
 namespace LTS.Candela.API;
 
@@ -9,9 +10,9 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+// Add services to the container.
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
@@ -41,9 +42,11 @@ public class Program
         // Add health checks
         builder.Services.AddHealthChecks();
 
-        var app = builder.Build();
+var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandling>();
+
+// Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();            
