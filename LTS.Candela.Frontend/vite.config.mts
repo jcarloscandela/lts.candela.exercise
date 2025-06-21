@@ -84,12 +84,12 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: '0.0.0.0',
   },
   css: {
     preprocessorOptions: {
       sass: {
-        api: 'modern-compiler',
-      },
+        ap      },
       scss: {
         api: 'modern-compiler',
       },
