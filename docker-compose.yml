@@ -18,7 +18,7 @@ services:
     ports:
       - "5000:5000"  # HTTP
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Release
       - ASPNETCORE_URLS=http://+:5000
       - ASPNETCORE_HTTP_PORTS=5000
       - ConnectionStrings__DefaultConnection=Host=db;Database=usermanager;Username=postgres;Password=postgres
