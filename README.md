@@ -1,57 +1,65 @@
-# LTS.Candela API
+# LTS.Candela
 
-A .NET API service for managing users and their translation credits.
+A full-stack application for managing users and their translation credits.
 
 ## Technologies Used
 
-- **.NET 9.0**: Modern, cross-platform framework for building APIs
-- **PostgreSQL**: Robust, open-source database for data persistence
-- **Entity Framework Core**: ORM for database operations
-- **Docker**: Containerization for consistent development and deployment
-- **Docker Compose**: Multi-container application orchestration
+- **Backend:** .NET 9.0, Entity Framework Core, PostgreSQL
+- **Frontend:** Vue 3, TypeScript, Vite, Vuetify
+- **Containerization:** Docker, Docker Compose
 
 ## Project Structure
 
 ```
 LTS.Candela.API/
 ├── Controllers/
-│   └── UserController.cs     # User management endpoints
+│   └── UsersController.cs         # User management endpoints
 ├── Models/
-│   └── User.cs              # User entity definition
+│   └── User.cs                    # User entity definition
 ├── Data/
-│   └── ApplicationDbContext.cs  # EF Core database context
-├── Migrations/              # Database migrations
-├── Program.cs              # Application entry point
-├── Dockerfile             # Container build instructions
-└── appsettings.json      # Application configuration
+│   └── ApplicationDbContext.cs    # EF Core database context
+├── Dtos/                          # Data transfer objects for User
+├── Middleware/
+│   └── ExceptionHandlingMiddleware.cs # Global error handling
+├── Migrations/                    # Database migrations
+├── Program.cs                     # Application entry point
+├── Dockerfile                     # Container build instructions
+└── appsettings.json               # Application configuration
 
 LTS.Candela.Frontend/
 ├── src/
-│   ├── App.vue             # Main Vue component
-│   ├── main.ts             # Application entry point
-│   ├── style.css           # Global styles
-│   ├── services/           # API service layer
-│   ├── types/              # TypeScript definitions
-│   └── views/              # Vue views
-├── package.json            # Project dependencies
-├── tsconfig.json           # TypeScript configuration
-├── vite.config.ts          # Vite build configuration
-├── Dockerfile              # Container build instructions
-└── index.html              # HTML entry point
+│   ├── App.vue                    # Main Vue component
+│   ├── main.ts                    # Application entry point
+│   ├── assets/                    # Static assets (logo, etc.)
+│   ├── components/                # Reusable Vue components
+│   ├── layouts/                   # Layout components
+│   ├── pages/                     # Page components (index, users, etc.)
+│   ├── plugins/                   # Plugin initialization (e.g., Vuetify)
+│   ├── router/                    # Vue Router setup
+│   ├── services/                  # API service layer (userService.ts)
+│   ├── stores/                    # Pinia stores (state management)
+│   └── styles/                    # SCSS styles and settings
+├── package.json                   # Project dependencies
+├── tsconfig.json                  # TypeScript configuration
+├── vite.config.mts                # Vite build configuration
+├── Dockerfile                     # Container build instructions
+└── index.html                     # HTML entry point
 ```
 
 ## Setup Instructions
 
 1. **Prerequisites**
    - Docker Desktop
-   - .NET 9.0 SDK (for local development)
+   - .NET 9.0 SDK (for backend local development)
+   - Node.js 20+ (for frontend local development)
 
-2. **Running the Application**
+2. **Running the Application (Docker)**
    ```bash
    docker compose up -d --build
    ```
    This will start:
    - API service on port 8080
+   - Frontend on port 5173
    - PostgreSQL database on port 5432
 
 3. **Database**
@@ -64,33 +72,14 @@ LTS.Candela.Frontend/
 
 ### User Management
 
-1. **Create User**
-   - POST `/api/User`
-   - Body:
-     ```json
-     {
-       "name": "string",
-       "email": "string",
-       "translationCredits": integer
-     }
-     ```
+- **Create User:** `POST /api/User`
+- **Get User:** `GET /api/User/{id}`
+- **Get All Users:** `GET /api/User`
+- **Update User:** `PUT /api/User/{id}`
+- **Delete User:** `DELETE /api/User/{id}`
+- **Update Credits:** `PATCH /api/User/{id}/credits`
 
-2. **Get User**
-   - GET `/api/User/{id}`
-
-3. **Get All Users**
-   - GET `/api/User`
-
-4. **Update User**
-   - PUT `/api/User/{id}`
-   - Body: Same as create
-
-5. **Delete User**
-   - DELETE `/api/User/{id}`
-
-6. **Update Credits**
-   - PATCH `/api/User/{id}/credits`
-   - Body: integer (new credit amount)
+Request/response bodies are defined in the Dtos folder.
 
 ## Data Persistence
 
@@ -101,46 +90,24 @@ The application uses Docker volumes for data persistence:
 
 ## Docker Configuration
 
-### Multi-stage Dockerfile
-1. **Base Stage**:
-   - Uses .NET 9.0 ASP.NET runtime
-   - Exposes ports 8080 and 8081
-
-2. **Build Stage**:
-   - Uses .NET 9.0 SDK
-   - Restores dependencies
-   - Builds the application
-
-3. **Publish Stage**:
-   - Publishes the application
-
-4. **Final Stage**:
-   - Creates the runtime image
-   - Copies published application
+### Multi-stage Dockerfile (Backend)
+- Uses .NET 9.0 SDK and ASP.NET runtime
+- Restores dependencies, builds, and publishes the application
+- Exposes ports 8080 and 8081
 
 ### Docker Compose
 
 The `docker-compose.yml` configuration:
-- Sets up API and database services
+- Sets up API, frontend, and database services
 - Configures environment variables
 - Sets up port mappings
-- Establishes dependencies
-- Configures health checks
+- Establishes dependencies and health checks
 - Sets up volume for data persistence
 
 ## Health Monitoring
 
-- API Health Check:
-  - Endpoint: `/health`
-  - Interval: 30s
-  - Timeout: 10s
-  - Retries: 3
-
-- Database Health Check:
-  - Uses `pg_isready`
-  - Interval: 10s
-  - Timeout: 5s
-  - Retries: 5
+- API Health Check: `/health` endpoint
+- Database Health Check: Uses `pg_isready`
 
 ## Environment Variables
 
@@ -149,3 +116,15 @@ The API service uses the following environment variables:
 - `ASPNETCORE_URLS`: http://+:8080
 - `ASPNETCORE_HTTP_PORTS`: 8080
 - `ConnectionStrings__DefaultConnection`: Database connection string
+
+The frontend uses environment variables defined in `.env` files as needed.
+
+## Recent Changes
+
+- Added Vue 3 frontend with Vite, Pinia, and Vuetify.
+- Refactored backend to use UsersController and Dtos.
+- Added ExceptionHandlingMiddleware for global error handling.
+- Added Dockerfile for frontend.
+- Updated docker-compose.yml to orchestrate backend, frontend, and database.
+- Added new migrations for user and credits.
+- Improved project structure for scalability.
