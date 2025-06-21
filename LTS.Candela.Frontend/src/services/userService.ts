@@ -3,7 +3,7 @@
 import type { Paginated } from "../models/paginated"
 import type { User } from "../models/user"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL as string
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string + '/users'
 
 export async function fetchUsers (
   page: number,
