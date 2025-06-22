@@ -1,130 +1,122 @@
-# LTS.Candela
+# LTS.Candela Exercise
 
-A full-stack application for managing users and their translation credits.
+This project consists of a backend API built with ASP.NET Core and a frontend built with Vue 3, TypeScript, and Vite. Both are containerized with Docker and orchestrated using Docker Compose.
 
-## Technologies Used
-
-- **Backend:** .NET 9.0, Entity Framework Core, PostgreSQL
-- **Frontend:** Vue 3, TypeScript, Vite, Vuetify
-- **Containerization:** Docker, Docker Compose
+---
 
 ## Project Structure
 
 ```
-LTS.Candela.API/
-├── Controllers/
-│   └── UsersController.cs         # User management endpoints
-├── Models/
-│   └── User.cs                    # User entity definition
-├── Data/
-│   └── ApplicationDbContext.cs    # EF Core database context
-├── Dtos/                          # Data transfer objects for User
-├── Middleware/
-│   └── ExceptionHandlingMiddleware.cs # Global error handling
-├── Migrations/                    # Database migrations
-├── Program.cs                     # Application entry point
-├── Dockerfile                     # Container build instructions
-└── appsettings.json               # Application configuration
-
-LTS.Candela.Frontend/
-├── src/
-│   ├── App.vue                    # Main Vue component
-│   ├── main.ts                    # Application entry point
-│   ├── assets/                    # Static assets (logo, etc.)
-│   ├── components/                # Reusable Vue components
-│   ├── layouts/                   # Layout components
-│   ├── pages/                     # Page components (index, users, etc.)
-│   ├── plugins/                   # Plugin initialization (e.g., Vuetify)
-│   ├── router/                    # Vue Router setup
-│   ├── services/                  # API service layer (userService.ts)
-│   ├── stores/                    # Pinia stores (state management)
-│   └── styles/                    # SCSS styles and settings
-├── package.json                   # Project dependencies
-├── tsconfig.json                  # TypeScript configuration
-├── vite.config.mts                # Vite build configuration
-├── Dockerfile                     # Container build instructions
-└── index.html                     # HTML entry point
+.
+├── LTS.Candela.API/           # Backend (.NET Core API)
+│   ├── LTS.Candela.API/       # API source code
+│   ├── LTS.Candela.API.Tests/ # API unit tests
+│   └── Dockerfile.tests       # Dockerfile for API tests
+├── LTS.Candela.Frontend/      # Frontend (Vue 3 + Vite + TypeScript)
+│   ├── src/                   # Source code (components, pages, models, services)
+│   ├── public/                # Static assets
+│   ├── package.json           # Frontend dependencies
+│   └── Dockerfile             # Dockerfile for frontend
+├── docker-compose.yml         # Multi-service orchestration
+└── README.md                  # Project documentation
 ```
 
-## Setup Instructions
+---
 
-1. **Prerequisites**
-   - Docker Desktop
-   - .NET 9.0 SDK (for backend local development)
-   - Node.js 20+ (for frontend local development)
+## Prerequisites
 
-2. **Running the Application (Docker)**
-   ```bash
-   docker compose up -d --build
-   ```
-   This will start:
-   - API service on port 8080
-   - Frontend on port 5173
-   - PostgreSQL database on port 5432
+- [Docker](https://www.docker.com/)
+- [Node.js](https://nodejs.org/) (for local frontend development)
+- [.NET 9 SDK](https://dotnet.microsoft.com/) (for local backend development)
 
-3. **Database**
-   - Database Name: usermanager
-   - User: postgres
-   - Password: postgres
-   - Connection string is automatically configured in docker-compose.yml
+---
 
-## API Endpoints
+## Running with Docker Compose
 
-### User Management
+To build and run both frontend and backend:
 
-- **Create User:** `POST /api/User`
-- **Get User:** `GET /api/User/{id}`
-- **Get All Users:** `GET /api/User`
-- **Update User:** `PUT /api/User/{id}`
-- **Delete User:** `DELETE /api/User/{id}`
-- **Update Credits:** `PATCH /api/User/{id}/credits`
+```sh
+docker-compose up --build
+```
 
-Request/response bodies are defined in the Dtos folder.
+- The frontend will be available at [http://localhost:5173](http://localhost:5173)
+- The backend API will be available at [http://localhost:5000](http://localhost:5000) (or as configured)
 
-## Data Persistence
+---
 
-The application uses Docker volumes for data persistence:
-- Volume Name: `postgres_data`
-- Mount Point: `/var/lib/postgresql/data`
-- Data survives container restarts and removals
+## Frontend
 
-## Docker Configuration
+- **Framework:** Vue 3 + Vite + TypeScript
+- **Directory:** `LTS.Candela.Frontend/`
 
-### Multi-stage Dockerfile (Backend)
-- Uses .NET 9.0 SDK and ASP.NET runtime
-- Restores dependencies, builds, and publishes the application
-- Exposes ports 8080 and 8081
+### Structure
 
-### Docker Compose
+- `src/components/` – Vue components
+- `src/pages/` – Page components (e.g., users)
+- `src/models/` – TypeScript models
+- `src/services/` – API service modules
+- `src/router/` – Vue Router setup
+- `src/App.vue` – Root component
+- `src/main.ts` – App entry point
 
-The `docker-compose.yml` configuration:
-- Sets up API, frontend, and database services
-- Configures environment variables
-- Sets up port mappings
-- Establishes dependencies and health checks
-- Sets up volume for data persistence
+### Local Development
 
-## Health Monitoring
+```sh
+cd LTS.Candela.Frontend
+npm install
+npm run dev
+```
 
-- API Health Check: `/health` endpoint
-- Database Health Check: Uses `pg_isready`
+The app will be available at [http://localhost:5173](http://localhost:5173).
+
+---
+
+## Backend
+
+- **Framework:** ASP.NET Core (.NET 8)
+- **Directory:** `LTS.Candela.API/`
+
+### Structure
+
+- `LTS.Candela.API/` – API source code
+- `LTS.Candela.API.Tests/` – Unit tests
+
+### Local Development
+
+```sh
+cd LTS.Candela.API/LTS.Candela.API
+dotnet restore
+dotnet run
+```
+
+The API will be available at [http://localhost:5000](http://localhost:5000).
+
+---
+
+## Running Tests
+
+### Backend
+
+```sh
+cd LTS.Candela.API/LTS.Candela.API.Tests
+dotnet test
+```
+
+---
 
 ## Environment Variables
 
-The API service uses the following environment variables:
-- `ASPNETCORE_ENVIRONMENT`: Development/Production
-- `ASPNETCORE_URLS`: http://+:8080
-- `ASPNETCORE_HTTP_PORTS`: 8080
-- `ConnectionStrings__DefaultConnection`: Database connection string
+- Frontend: Configure `.env` in `LTS.Candela.Frontend/` as needed.
+- Backend: Configure `appsettings.json` or `appsettings.Development.json` in `LTS.Candela.API/LTS.Candela.API/`.
 
-The frontend uses environment variables defined in `.env` files as needed.
+---
 
-## Recent Changes
+## Future Improvements
 
-- Added Vue 3 frontend with Vite, Pinia, and Vuetify.
-- Refactored backend to use UsersController and Dtos.
-- Added ExceptionHandlingMiddleware for global error handling.
-- Added Dockerfile for frontend.
-- Updated docker-compose.yml to orchestrate backend, frontend, and database.
-- Added new migrations for user and credits.
-- Improved project structure for scalability.
+- Kubernetes (k8s) local development and deployment support
+- Authentication (user login, registration)
+- Authorization (role-based access control)
+- Multilanguage (i18n) support
+- End-to-end (E2E) testing
+- Integration testing
+- Create Dockerfile for running Unit Tests
