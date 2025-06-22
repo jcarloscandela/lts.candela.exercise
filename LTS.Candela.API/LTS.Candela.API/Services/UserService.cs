@@ -20,6 +20,8 @@ public class UserService : IUserService
             Name = userCreateDto.Name,
             Email = userCreateDto.Email,
             TranslationCredits = 0, // Default credits
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
         };
         var createdUser = await _userRepository.AddUserAsync(user);
 
@@ -30,12 +32,6 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetUserByIdAsync(id);
         return MapToDto(user);
-    }
-
-    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
-    {
-        var users = await _userRepository.GetAllUsersAsync();
-        return users.Select(MapToDto);
     }
 
     public async Task<UserDto> UpdateUserAsync(Guid id, UserUpdateDto userUpdateDto)
@@ -52,6 +48,7 @@ public class UserService : IUserService
 
         user.Name = userUpdateDto.Name;
         user.Email = userUpdateDto.Email;
+        user.DateModified = DateTime.UtcNow;
 
         var updatedUser = await _userRepository.UpdateUserAsync(id, user);
 
@@ -67,7 +64,10 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetUserByIdAsync(id);
         if (user == null) return null;
+
         user.TranslationCredits = credits;
+        user.DateModified = DateTime.UtcNow;
+
         var updatedUser = await _userRepository.UpdateUserAsync(id, user);
         return MapToDto(updatedUser);
     }

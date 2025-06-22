@@ -77,7 +77,9 @@ void SeedDevelopmentData(ApplicationDbContext dbContext)
             Id = Guid.NewGuid(),
             Name = $"Test User {i}",
             Email = $"testuser{i}@test.com",
-            TranslationCredits = i * 100
+            TranslationCredits = i * 100,
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
         }
     );
     dbContext.Users.AddRange(users);

@@ -19,5 +19,11 @@ namespace LTS.Candela.API.Models
         [Required]
         [Range(0, int.MaxValue)]
         public int TranslationCredits { get; set; }
+
+        [Required]
+        public DateTime DateCreated { get; set; }
+
+        [Required]
+        public DateTime DateModified { get; set; }
     }
 }

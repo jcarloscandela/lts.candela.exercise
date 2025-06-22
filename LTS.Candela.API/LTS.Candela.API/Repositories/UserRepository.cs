@@ -28,7 +28,9 @@ public class UserRepository : IUserRepository
 
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users
+            .OrderByDescending(x => x.DateModified)
+            .ToListAsync();
     }
 
     public async Task<User> UpdateUserAsync(Guid id, User user)
@@ -59,7 +61,7 @@ public class UserRepository : IUserRepository
     {
         var totalCount = await _context.Users.CountAsync();
         var users = await _context.Users
-            .OrderBy(u => u.Name)
+            .OrderByDescending(u => u.DateModified)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

@@ -55,23 +55,6 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetAllUsersAsync_ShouldReturnMappedUsers()
-    {
-        var users = new List<User>
-        {
-            new() { Id = Guid.NewGuid(), Name = "User1", Email = "u1@test.com", TranslationCredits = 1 },
-            new() { Id = Guid.NewGuid(), Name = "User2", Email = "u2@test.com", TranslationCredits = 2 }
-        };
-        _userRepository.GetAllUsersAsync().Returns(users);
-
-        var result = (await _userService.GetAllUsersAsync()).ToList();
-
-        Assert.Equal(2, result.Count);
-        Assert.Equal("User1", result[0].Name);
-        Assert.Equal("User2", result[1].Name);
-    }
-
-    [Fact]
     public async Task UpdateUserAsync_ShouldReturnUpdatedUser()
     {
         var userId = Guid.NewGuid();
