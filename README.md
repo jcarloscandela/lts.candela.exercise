@@ -8,16 +8,46 @@ This project consists of a backend API built with ASP.NET Core and a frontend bu
 
 ```
 .
-├── LTS.Candela.API/           # Backend (.NET Core API)
-│   ├── LTS.Candela.API/       # API source code
-│   └── LTS.Candela.API.Tests/ # API unit tests
-├── LTS.Candela.Frontend/      # Frontend (Vue 3 + Vite + TypeScript)
-│   ├── src/                   # Source code (components, pages, models, services)
-│   ├── public/                # Static assets
-│   ├── package.json           # Frontend dependencies
-│   └── Dockerfile             # Dockerfile for frontend
-├── docker-compose.yml         # Multi-service orchestration
-└── README.md                  # Project documentation
+├── .gitignore
+├── docker-compose.yml
+├── README.md
+├── LTS.Candela.API/
+│   ├── LTS.Candela.API/
+│   │   ├── .dockerignore
+│   │   ├── appsettings.Development.json
+│   │   ├── appsettings.json
+│   │   ├── Dockerfile
+│   │   ├── LTS.Candela.API.csproj
+│   │   ├── Program.cs
+│   │   ├── Controllers/
+│   │   ├── Data/
+│   │   ├── Dtos/
+│   │   ├── Mappers/
+│   │   ├── Middleware/
+│   │   ├── Migrations/
+│   │   ├── Models/
+│   │   ├── Properties/
+│   │   ├── Repositories/
+│   │   ├── Services/
+│   │   └── ...
+│   └── LTS.Candela.API.Tests/
+│       ├── LTS.Candela.API.Tests.csproj
+│       └── UserServiceTests.cs
+├── LTS.Candela.Frontend/
+│   ├── .env
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── public/
+│   └── src/
+│       ├── App.vue
+│       ├── main.ts
+│       ├── assets/
+│       ├── components/
+│       ├── models/
+│       ├── pages/
+│       ├── router/
+│       ├── services/
+│       └── style.css
 ```
 
 ---
@@ -33,6 +63,8 @@ This project consists of a backend API built with ASP.NET Core and a frontend bu
 ## Running with Docker Compose
 
 To build and run both frontend and backend:
+
+> **Note:** Make sure Docker Desktop (or the Docker daemon) is running before executing the following command.
 
 ```sh
 docker-compose up --build
@@ -72,7 +104,7 @@ The app will be available at [http://localhost:5173](http://localhost:5173).
 
 ## Backend
 
-- **Framework:** ASP.NET Core (.NET 8)
+- **Framework:** ASP.NET Core (.NET 9)
 - **Directory:** `LTS.Candela.API/`
 
 ### Structure
@@ -119,3 +151,4 @@ dotnet test
 - End-to-end (E2E) testing
 - Integration testing
 - Create Dockerfile for running Unit Tests
+- Create Dockerfile for SonarQube (static analysis of code)
