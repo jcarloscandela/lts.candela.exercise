@@ -10,8 +10,7 @@ This project consists of a backend API built with ASP.NET Core and a frontend bu
 .
 ├── LTS.Candela.API/           # Backend (.NET Core API)
 │   ├── LTS.Candela.API/       # API source code
-│   ├── LTS.Candela.API.Tests/ # API unit tests
-│   └── Dockerfile.tests       # Dockerfile for API tests
+│   └── LTS.Candela.API.Tests/ # API unit tests
 ├── LTS.Candela.Frontend/      # Frontend (Vue 3 + Vite + TypeScript)
 │   ├── src/                   # Source code (components, pages, models, services)
 │   ├── public/                # Static assets
